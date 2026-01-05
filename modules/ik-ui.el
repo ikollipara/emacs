@@ -44,6 +44,7 @@
   :demand t
   :custom
   (catppuccin-flavor 'latte)
+  :bind (("C-c t t" . catppuccin-load-flavor))
   :config
   (load-theme 'catppuccin :no-confirm))
 

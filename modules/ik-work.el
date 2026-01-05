@@ -30,7 +30,7 @@
 
 (use-package obsidian
   :ensure t
-  :if ikwork-laptop-p
+  :if ik:work-laptop-p
   :bind (("C-c n M-f" . obsidian-jump))
   :hook (after-init . obsidian-rescan-cache)
   :custom

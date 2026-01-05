@@ -103,7 +103,8 @@
    '((fsharp "https://github.com/ionide/tree-sitter-fsharp" "main" "fsharp/src")
      (emacs-lisp "https://github.com/Wilfred/tree-sitter-elisp")
      (scss "https://github.com/serenadeai/tree-sitter-scss")
-     (elm "https://github.com/elm-tooling/tree-sitter-elm")))
+     (elm "https://github.com/elm-tooling/tree-sitter-elm")
+     (python . ("https://github.com/tree-sitter/tree-sitter-python" "v0.23.6" nil nil nil))))
   :hook
   (elpaca-after-init . global-treesit-auto-mode))
 

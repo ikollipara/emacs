@@ -4,3 +4,4 @@ var/
 !var/recentf-save.el
 etc/
 elpaca/
+tree-sitter

@@ -94,7 +94,7 @@
 	  ("Cs" "Item to Buy" entry (file+headline ,ik:org-gtd-file "Intray")
 	   "** %{Item} :SHOPPING:" :empty-lines 0 :immediate-finish t)
 	  ("Cr" "Respond to" entry (file+headline ,ik:org-gtd-file "Next Actions")
-	   "** NEXT Respond to %{Whom} %^{For|CUNE|UNL}\nSCHEDULED: %T\n\n%?" :empty-lines 1)
+	   "** NEXT Respond to %^{Whom} %^{For|CUNE|UNL}\nSCHEDULED: %T\n\n%?" :empty-lines 1)
 	  ("j" "Journal")
 	  ("jm" "Morning Dump" plain (file+olp+datetree ,ik:org-journal-file)
 	   "*Morning Dump*\n%?\n" :empty-lines 1)

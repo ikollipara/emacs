@@ -20,10 +20,12 @@
 
 ;;; Commentary:
 
-;; This is my customization of the core emacs experience.
+;; This is my customization of the core Emacs experience.
 ;; That is, this is only for changes made to built-in tooling.
 
 ;;; Code:
+
+(require 'ik-vars)
 
 (use-package emacs
   :ensure nil
@@ -51,9 +53,9 @@
   (hl-line-mode 1)
   (when (file-exists-p custom-file)
     (load custom-file))
-  (set-face-attribute 'default nil :family "Cascadia Code" :height 110)
-  (set-face-attribute 'variable-pitch nil :family "Space Mono" :height 110)
-  (set-face-attribute 'fixed-pitch nil :family "Space Mono" :height 110))
+  (set-face-attribute 'default nil :family "Cascadia Code" :height (static-if ik:work-laptop-p 160 110))
+  (set-face-attribute 'variable-pitch nil :family "Space Mono" :height (static-if ik:work-laptop-p 160 110))
+  (set-face-attribute 'fixed-pitch nil :family "Space Mono" :height (static-if ik:work-laptop-p 160 110)))
 
 
 (use-package eshell

@@ -3,7 +3,7 @@
 ;; Copyright (C) 2026  Ian Kollipara
 
 ;; Author: Ian Kollipara <ian.kollipara@gmail.com>
-;; Keywords: local, text, tex, abbrev
+;; Keywords: local, text, tex
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 ;;; Commentary:
 
 ;; I make heavy use of org, latex, and citar for my research workflow.
-;; This is how its set up in emacs.
+;; This is how its set up in Emacs.
 
 ;;; Code:
 
@@ -52,7 +52,9 @@
 (use-package citar
   :ensure t
   :custom
-  (org-cite-global-bibliography `(,(expand-file-name ik:notes-dir "/lib.bib") "~/Dropbox/ZK/References.bib"))
+  (org-cite-global-bibliography
+   `(,(expand-file-name (concat ik:notes-dir "/lib.bib"))
+     ,(expand-file-name (static-if ik:work-laptop-p "~/lib.bib" "~/Dropbox/ZK/References.bib"))))
   (org-cite-insert-processor 'citar)
   (org-cite-follow-processor 'citar)
   (org-cite-activate-processor 'citar)

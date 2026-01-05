@@ -20,7 +20,7 @@
 
 ;;; Commentary:
 
-;; This is my personal emacs configuration. It is built around 3 core ideas:
+;; This is my personal Emacs configuration.  It is built around 3 core ideas:
 ;; 1. movement through searching
 ;; 2. Things should *just* work
 ;; 3. Emacs is my home on my computer, not just another program.

@@ -24,6 +24,20 @@
 
 ;;; Code:
 
+(use-package orderless
+  :ensure t
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-overrides '((file (styles partial-completion))))
+  (completion-pcm-leading-wildcard t)
+  :hook
+  (ivy-mode . orderless--setup-ivy)
+  :config
+  (defun orderless--setup-ivy ()
+    "Setup `ivy' to play with `orderless'."
+    (setq ivy-re-builders-alist '((t . orderless-ivy-re-builder)))
+    (add-to-list 'ivy-highlight-functions-alist '(orderless-ivy-re-builder . orderless-ivy-highlight))))
+
 (use-package corfu
   :ensure t
   :custom
