@@ -1,0 +1,6 @@
+#+TITLE: My Emacs Configuration
+#+AUTHOR: Ian Kollipara
+#+DATE: <2026-01-05 Mon>
+
+* Summary
+This is my personal Emacs configuration. See [[file:init.el][init.el]] for more details. 

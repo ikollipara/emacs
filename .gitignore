@@ -1,0 +1,6 @@
+elpa/
+eln-cache/
+var/
+!var/recentf-save.el
+etc/
+elpaca/

@@ -1,0 +1,13 @@
+touch ik-vars.el
+touch ik-core.el
+touch ik-ui.el
+touch ik-ivy.el
+touch ik-corfu.el
+touch ik-org.el
+touch ik-research.el
+touch ik-prog.el
+touch ik-mail.el
+touch ik-music.el
+touch ik-work.el
+exit
+exit
