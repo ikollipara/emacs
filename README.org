@@ -3,4 +3,12 @@
 #+DATE: <2026-01-05 Mon>
 
 * Summary
+:PROPERTIES:
+:ID:       502c269f-0c35-4908-b01e-7a5e5caa3a41
+:END:
 This is my personal Emacs configuration. See [[file:init.el][init.el]] for more details. 
+
+
+#+DOWNLOADED: screenshot @ 2026-01-05 15:04:51
+[[file:../../Notes/images/Summary/2026-01-05_15-04-51_screenshot.png]]
+
