@@ -24,13 +24,9 @@
 
 ;;; Code:
 
-(defvar ik:titanmacs-logo "
-▄▄▄▄▄▄▄▄▄                        ▄▄▄▄▄▄▄                            
-▀▀▀███▀▀▀ ▀▀  ██                ███▀▀▀▀▀                            
-   ███    ██ ▀██▀▀ ▀▀█▄ ████▄   ███▄▄    ███▄███▄  ▀▀█▄ ▄████ ▄█▀▀▀ 
-   ███    ██  ██  ▄█▀██ ██ ██   ███      ██ ██ ██ ▄█▀██ ██    ▀███▄ 
-   ███    ██▄ ██  ▀█▄██ ██ ██   ▀███████ ██ ██ ██ ▀█▄██ ▀████ ▄▄▄█▀ 
-" "The custom logo for titan emacs, my configuration.")
+(defvar ik:titanmacs-logo
+  (concat user-emacs-directory "assets/titanmacs-logo.txt")
+  "The custom logo for titan Emacs, my configuration.")
 
 
 (use-package doom-modeline
@@ -44,7 +40,48 @@
   :demand t
   :custom
   (catppuccin-flavor 'latte)
-  :bind (("C-c t t" . catppuccin-load-flavor))
+  :bind (("C-c t t" . ivy-catppuccin-load-flavor))
+  :init
+  (defvar ik:catppuccin-rich-init-p nil)
+  (defvar ik:catppuccin-descriptions
+    '((latte . ("🌻" . "Our lightest theme harmoniously inverting the essence of Catppuccin's dark themes."))
+      (frappe . ("🪴" . "A less vibrant alternative using subdued colors for a muted aesthetic."))
+      (macchiato . ("🌺" . "Medium contrast with gentle colors creating a soothing atmosphere."))
+      (mocha . ("🌿" . "The Original — Our darkest variant offering a cozy feeling with color-rich accents.")))
+    "Descriptions for the `catppuccin-flavor'.")
+  (defun ivy-rich--catppucin-load-flavor-extract-symbol (candidate)
+    "Get the symbol for the CANDIDATE."
+    (car (alist-get (intern candidate) ik:catppuccin-descriptions nil nil #'equal)))
+  (defun ivy-rich--catppuccin-load-flavor-extract-name (candidate)
+    "Display the CANDIDATE."
+    (capitalize candidate))
+  (defun ivy-rich--catppuccin-load-flavor-extract-description (candidate)
+    "Get the description for the CANDIDATE."
+    (cdr (alist-get (intern candidate) ik:catppuccin-descriptions nil nil #'equal)))
+
+  (defun ivy-catppuccin-load-flavor ()
+    (interactive)
+    (unless ik:catppuccin-rich-init-p
+      (setq ik:catppuccin-rich-init-p t)
+      (setup-ivy-rich-ivy-catppuccin-load-flavor))
+    (ivy-read "Catppuccin flavor: "
+	      ik:catppuccin-descriptions
+	      :preselect catppuccin-flavor
+	      :action (lambda (flavor)
+			(setq catppuccin-flavor (car flavor))
+			(catppuccin-reload)
+			(message "Catppuccin flavor changed to %s %s" (cadr flavor) (capitalize (symbol-name (car flavor)))))))
+  (defun setup-ivy-rich-ivy-catppuccin-load-flavor ()
+    (setopt ivy-rich-display-transformers-list
+	    (append
+	     '(
+	       ivy-catppuccin-load-flavor
+	       (:columns
+		((ivy-rich--catppucin-load-flavor-extract-symbol)
+		 (ivy-rich--catppuccin-load-flavor-extract-name (:width 0.15))
+		 (ivy-rich--catppuccin-load-flavor-extract-description (:width 0.8 :face 'font-lock-doc-face)))))
+	     ivy-rich-display-transformers-list))
+    (ivy-rich-reload))
   :config
   (load-theme 'catppuccin :no-confirm))
 
@@ -57,16 +94,22 @@
   :demand t
   :functions grid--merge-plists)
 
-(use-package enlight
+(use-package dashboard
   :ensure t
-  :after grid
-  :init
-  (require 'grid)
   :custom
-  (initial-buffer-choice #'enlight)
-  (enlight-content
-   (concat
-    (grid-make-box `(:content ,ik:titanmacs-logo :width 80)))))
+  (dashboard-startup-banner ik:titanmacs-logo)
+  (dashboard-banner-logo-title (format-time-string "%Y-%m-%d"))
+  (dashboard-footer-messages '("Failures, repeated failures, are finger posts on the road to achievement. One fails forward toward success. \n- C.S. Lewis"))
+  (dashboard-center-content t)
+  (dashboard-vertically-center-content t)
+  (dashboard-items '((projects . 5) (agenda . 5) (recents . 5) (bookmarks . 1)))
+  (dashboard-projects-backend 'project-el)
+  (dashboard-projects-backend-switch-function 'project-switch-project)
+  (dashboard-agenda-files `(,(concat ik:notes-dir "/gtd.org")))
+  :config
+  (add-hook 'elpaca-after-init-hook #'dashboard-insert-startupify-lists)
+  (add-hook 'elpaca-after-init-hook #'dashboard-initialize)
+  (dashboard-setup-startup-hook))
 
 (use-package helpful
   :ensure t
@@ -87,3 +130,4 @@
 
 (provide 'ik-ui)
 ;;; ik-ui.el ends here
+

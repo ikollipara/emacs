@@ -25,7 +25,7 @@
 ;;; Code:
 
 (defvar ik:work-laptop-p (eq system-type 'darwin) "Whether or not I'm on my work laptop.")
-(defvar ik:notes-dir (expand-file-name "~/Notes") "My Notes directory")
+(defvar ik:notes-dir (expand-file-name "~/Dropbox/ZK") "My Notes directory")
 
 (provide 'ik-vars)
 ;;; ik-vars.el ends here

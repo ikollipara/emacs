@@ -69,6 +69,28 @@
 	(when title-node
           (string-trim (dom-text title-node))))))
 
+  (defun get-votd ()
+    "Get the verse of the day from biblegateway.com."
+    (with-current-buffer (url-retrieve-synchronously "https://biblegateway.com" t t)
+      (goto-char (point-min))
+      (re-search-forward "^$" nil 'move)
+      (let* ((dom (libxml-parse-html-region (point) (point-max)))
+	     (votd-node (car (dom-by-id dom "votd")))
+	     (verse-text-node (car (dom-by-id votd-node "verse-text")))
+	     (citation-node (car (dom-by-class votd-node "citation"))))
+	(kill-buffer)
+	(when votd-node
+	  `((verse . ,(string-trim (dom-texts verse-text-node "")))
+	    (citation . ,(string-trim (dom-text citation-node))))))))
+
+  (defun get-votd-for-capture ()
+    (let ((votd (get-votd)))
+      (concat
+       "#+begin_quote\n"
+       "/" (alist-get 'verse votd) "/\n"
+       "- " (alist-get 'citation votd) "\n"
+       "#+end_quote")))
+  
   (defun org-extract-title-from-link (link)
     "Extract the title of a webpage, then format it as an org link."
     (interactive "sURL: ")
@@ -90,7 +112,7 @@
 	  ("CT" "Thesis Fixes" entry (file+headline ,ik:org-gtd-file "Intray")
 	   "** CAPTURE [%U] Updates from Soh :THESIS:UNL:" :empty-lines 1 :immediate-finish t)
 	  ("Ca" "Article to Read" entry (file+headline ,ik:org-gtd-file "Intray")
-	   "** CAPTURE Read %(org-extract-title-from-link \"%x\")" :empty-lines 1 :immediate-finish t)
+	   "** CAPTURE Read %(org-extract-title-from-link \"%c\")" :empty-lines 1 :immediate-finish t)
 	  ("Cs" "Item to Buy" entry (file+headline ,ik:org-gtd-file "Intray")
 	   "** %{Item} :SHOPPING:" :empty-lines 0 :immediate-finish t)
 	  ("Cr" "Respond to" entry (file+headline ,ik:org-gtd-file "Next Actions")
@@ -99,7 +121,7 @@
 	  ("jm" "Morning Dump" plain (file+olp+datetree ,ik:org-journal-file)
 	   "*Morning Dump*\n%?\n" :empty-lines 1)
 	  ("jb" "Daily Bible" plain (file+olp+datetree ,ik:org-journal-file)
-	   "*Bible Study*\n#+begin_quote\n%^{Bible Verse}\n- %^{Bible Verse Location}\n#+end_quote\n%?\n" :empty-lines 1)
+	   "*Bible Study*\n%(get-votd-for-capture)\n%?\n" :empty-lines 1)
 	  ("jc" "End of Day" plain (file+olp+datetree ,ik:org-journal-file)
 	   "*End of Day*\n%?\n" :empty-lines 1)))
   (setq org-agenda-custom-commands

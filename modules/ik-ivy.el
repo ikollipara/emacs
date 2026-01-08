@@ -34,7 +34,10 @@
   :custom
   (ivy-use-virtual-buffers t)
   (iv-use-selectable-prompt t)
-  (ivy-re-builders-alist '((t . ivy--regex-ignore-order))))
+  (ivy-re-builders-alist
+   '((t . ivy--regex-ignore-order)
+     (counsel-M-x . ivy--regex-ignore-order)
+     (counsel-org-capture . regexp-quote))))
 
 (use-package ivy-avy
   :ensure nil

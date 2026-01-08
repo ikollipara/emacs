@@ -29,7 +29,6 @@
 
 ;;;  Elpaca Initialization
 ;; I use elpaca as my package management tool. I used to use straight, but I switched.
-
 (defvar elpaca-installer-version 0.11)
 (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
 (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
@@ -75,6 +74,20 @@
 (elpaca elpaca-use-package
   (elpaca-use-package-mode))
 
+;;;  Profiling
+(defvar ik:original-gc-cons-threshold gc-cons-threshold "The original value.  Used as a placeholder.")
+(setq gc-cons-threshold 50000000)
+(use-package benchmark-init
+  :ensure nil
+  :demand t
+  :load-path "./site-lisp/benchmark-init-el"
+  :config
+  (benchmark-init/activate)
+  (defun display-benchmark-results ()
+    (interactive)
+    (require 'benchmark-init-modes)
+    (call-interactively #'benchmark-init/show-durations-tree))
+  :hook (elpaca-after-init . benchmark-init/deactivate))
 
 ;;;  Setting up `load-path'
 ;; I use a modular configuration, so here I set up my `load-path' to include it.
@@ -93,6 +106,8 @@
 (require 'ik-music)
 (when ik:work-laptop-p
   (require 'ik-work))
+
+(setq gc-cons-threshold ik:original-gc-cons-threshold)
 
 (provide 'init)
 ;;; init.el ends here
