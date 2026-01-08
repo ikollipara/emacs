@@ -9,6 +9,5 @@
 This is my personal Emacs configuration. See [[file:init.el][init.el]] for more details. 
 
 
-#+DOWNLOADED: screenshot @ 2026-01-05 15:04:51
-[[file:../../Notes/images/Summary/2026-01-05_15-04-51_screenshot.png]]
+
 
