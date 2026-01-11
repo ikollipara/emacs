@@ -26,7 +26,7 @@
 ;; 3. Emacs is my home on my computer, not just another program.
 
 ;;; Code:
-
+(profiler-start 'cpu)
 ;;;  Elpaca Initialization
 ;; I use elpaca as my package management tool. I used to use straight, but I switched.
 (defvar elpaca-installer-version 0.11)
@@ -79,8 +79,9 @@
 (setq gc-cons-threshold 50000000)
 (use-package benchmark-init
   :ensure nil
+  :disabled t
   :demand t
-  :load-path "./site-lisp/benchmark-init-el"
+  :load-path "./site-lisp/benchmark-init"
   :config
   (benchmark-init/activate)
   (defun display-benchmark-results ()
@@ -107,7 +108,9 @@
 (when ik:work-laptop-p
   (require 'ik-work))
 
-(setq gc-cons-threshold ik:original-gc-cons-threshold)
+(add-hook 'elpaca-after-init (lambda ()
+			       (setq gc-cons-threshold ik:original-gc-cons-threshold)
+			       (profiler-stop)))
 
 (provide 'init)
 ;;; init.el ends here

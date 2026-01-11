@@ -31,17 +31,21 @@
   :custom
   (ebib-bibtex-dialect 'biblatex)
   (ebib-file-associations nil)
+  (ebib-default-directory (concat ik:notes-dir))
+  (ebib-import-target-directory (concat ik:notes-dir "/assets/"))
   :bind (("C-c r b" . ebib)))
 
 (use-package biblio :ensure t)
+(use-package biblio-openlibrary
+  :after biblio
+  :ensure '(biblio-openlibrary :host github :repo "fabcontigiani/biblio-openlibrary")
+  :commands openlibrary-lookup)
 
 (use-package ebib-biblio
   :ensure nil
-  :after (:all biblio ebib)
+  :after (:all biblio biblio-openlibrary ebib)
   :load-path "elpaca/repos/ebib"
-  :bind ((:map ebib-index-mode-map
-	       ("B" . ebib-biblio-import-doi))
-	 (:map biblio-selection-mode-map
+  :bind ((:map biblio-selection-mode-map
 	       ("e" . ebib-biblio-selection-import))))
 
 (use-package pdf-tools

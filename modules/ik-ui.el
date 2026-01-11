@@ -70,6 +70,7 @@
 	      :action (lambda (flavor)
 			(setq catppuccin-flavor (car flavor))
 			(catppuccin-reload)
+			(setup-org-faces)
 			(message "Catppuccin flavor changed to %s %s" (cadr flavor) (capitalize (symbol-name (car flavor)))))))
   (defun setup-ivy-rich-ivy-catppuccin-load-flavor ()
     (setopt ivy-rich-display-transformers-list
@@ -84,6 +85,7 @@
     (ivy-rich-reload))
   :config
   (load-theme 'catppuccin :no-confirm))
+
 
 (use-package focus
   :ensure t

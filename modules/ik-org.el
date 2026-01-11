@@ -48,9 +48,11 @@
   (require 'org-tempo)
   (require 'org-habit)
   (require 'org-timer)
-  (set-face-attribute 'org-document-title nil :height 2.0)
+  (defun setup-org-faces ()
+    (set-face-attribute 'org-document-title nil :height 2.0))
+  (setup-org-faces)
   (defvar ik:org-gtd-file (concat ik:notes-dir "/gtd.org") "The `org' file used for my gtd workflow.")
-  (defvar ik:org-journal-file (concat ik:notes-dir "/20251228T174637--journal__ongoing_personal.org") "My journal file.")
+  (defvar ik:org-journal-file (concat ik:notes-dir "/journal.org") "My journal file.")
   (defvar ik:org-work-tag "CUNE" "Things that are associated with Concordia, where I currently work.")
   (defvar ik:org-research-tag "UNL" "Things that are associated with UNL, where I am completing my research.")
   (defvar ik:org-personal-tag "PERSONAL" "Things that are associated with my personal life.")
@@ -199,7 +201,7 @@
   
   (defun ivy-rich--counsel-denote-open-extract-name (candidate)
     (let ((options (fast-read-org-titles counsel--fzf-dir))
-	  (normalized-name (expand-file-name (concat counsel--fzf-dir candidate))))
+	  (normalized-name (expand-file-name (concat counsel--fzf-dir "/" candidate))))
       (alist-get normalized-name options nil nil 'string=)))
   (defun ivy-rich--counsel-denote-open-extract-keyword (candidate)
     (string-replace "_" ", " (car (string-split (cadr (string-split (cadr (string-split candidate "--")) "__")) ".org"))))
@@ -218,7 +220,22 @@
 			      (let ((default-directory counsel--fzf-dir))
 				(when (bufferp x) (kill-buffer x))
 				(find-file x))))
-		  :caller 'counsel-denote-open)))))
+		  :caller 'counsel-denote-open))))
+
+  (defun denote-create-from-article-link ()
+    "Create a new denote note with the name from the LINK."
+    (interactive)
+    (let* ((link (org-element-context))
+	   (path (org-element-property :raw-link link))
+	   (description (buffer-substring-no-properties
+			 (org-element-property :contents-begin link)
+			 (org-element-property :contents-end link)))
+	   (new-note (find-file-noselect (denote description '("article" "online")))))
+      (with-current-buffer new-note
+	(goto-char (point-max))
+	(insert "#+LINK: " path))
+      (switch-to-buffer new-note))))
+
 
 (use-package jinx
   :ensure t
