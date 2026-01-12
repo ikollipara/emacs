@@ -118,16 +118,6 @@ Used in the integration of project.el with perspective.el"
       (persp-switch (project-name (project-current nil)))
       (persp-set-buffer d)
       (persp-switch-to-buffer d)))
-  (defun my/project-ignore-git (orig-fun &rest args)
-    (let ((project (apply orig-fun args)))
-      (when project
-	(let* ((root (car (last project))))
-          (unless (string-prefix-p (expand-file-name "~/Notes/")
-                                   (expand-file-name root))
-            project)))))
-
-  (advice-add 'project--find-in-directory :around #'my/project-ignore-git)
-
   (advice-add 'project-find-dir :around #'advice--create-new-persp-after)
   (advice-add 'project-find-file :around #'advice--create-new-persp-after)
   (advice-add 'project-dired :around #'advice--create-new-persp-after)

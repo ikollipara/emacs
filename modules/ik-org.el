@@ -101,6 +101,7 @@
   (setq org-directory ik:notes-dir
 	org-todo-keywords '((sequence "CAPTURE(c)")
 			    (sequence "NEXT(n)" "PROJECT(p)" "|" "DONE(d!)" "CANCELLED(l!)")
+			    (sequence "READ(r)" "READING(e)" "|" "FINISHED(f!)")
 			    (sequence "SOMEDAY(s)"))
 	org-agenda-files `(,ik:org-gtd-file))
   (setq org-stuck-projects
