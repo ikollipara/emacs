@@ -35,7 +35,6 @@
 
 (use-package org
   :ensure t
-  :demand t
   :bind (("C-c j" . counsel-org-capture)
 	 ("C-c a" . org-agenda)
 	 ("C-c C-t" . org-agenda-clock-out))
@@ -149,11 +148,10 @@
 (use-package org-modern
   :ensure t
   :after org
-  :hook (elpaca-after-init . global-org-modern-mode))
+  :hook org-mode)
 
 (use-package org-download
   :ensure t
-  :demand t
   :after org
   :custom
   (org-download-image-dir (concat ik:notes-dir "/images"))
@@ -173,16 +171,18 @@
 	 (:map org-mode-map
 	       ("C-c C-x C-d" . denote-link)
 	       ("C-c C-x M-d" . denote-backlinks)))
-  :config
-  (setopt ivy-rich-display-transformers-list
-	  (append
-	   '(counsel-denote-open
-	     (:columns
-	      ((nerd-icons-ivy-rich-file-icon)
-	       (ivy-rich--counsel-denote-open-extract-name (:width 0.15))
-	       (ivy-rich--counsel-denote-open-extract-keyword (:width 0.8)))))
-	   ivy-rich-display-transformers-list))
-  (ivy-rich-reload)
+  :init
+  (defvar ik:denote-rich-init-p nil)
+  (defun setup-denote-ivy-rich ()
+    (setopt ivy-rich-display-transformers-list
+	    (append
+	     '(counsel-denote-open
+	       (:columns
+		((nerd-icons-ivy-rich-file-icon)
+		 (ivy-rich--counsel-denote-open-extract-name (:width 0.15))
+		 (ivy-rich--counsel-denote-open-extract-keyword (:width 0.8)))))
+	     ivy-rich-display-transformers-list))
+    (ivy-rich-reload))
   (defun fast-read-org-titles (dir)
     "Use ripgrep to extract #+TITLE lines from .org files under DIR."
     (let ((default-directory dir))
@@ -209,6 +209,9 @@
   (defun counsel-denote-open ()
     "Open a note using a rich counsel interface."
     (interactive)
+    (unless ik:denote-rich-init-p
+      (setq ik:denote-rich-init-p t)
+      (setup-denote-ivy-rich))
     (let ((counsel--fzf-dir (concat ik:notes-dir "/")))
       (with-environment-variables
 	  (("FZF_DEFAULT_COMMAND" "fd --type f -e org --exclude gtd.org"))

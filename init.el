@@ -26,7 +26,7 @@
 ;; 3. Emacs is my home on my computer, not just another program.
 
 ;;; Code:
-(profiler-start 'cpu)
+
 ;;;  Elpaca Initialization
 ;; I use elpaca as my package management tool. I used to use straight, but I switched.
 (defvar elpaca-installer-version 0.11)
@@ -70,17 +70,18 @@
 
 ;;;  Elpaca Use Package
 ;; My configuration is `use-package' based, so I need to set up elpaca with it.
-
+(profiler-start 'cpu)
 (elpaca elpaca-use-package
-  (elpaca-use-package-mode))
+  (elpaca-use-package-mode)
+  (setopt use-package-compute-statistics t))
 
 ;;;  Profiling
 (defvar ik:original-gc-cons-threshold gc-cons-threshold "The original value.  Used as a placeholder.")
 (setq gc-cons-threshold 50000000)
 (use-package benchmark-init
   :ensure nil
-  :disabled t
   :demand t
+  :disabled t
   :load-path "./site-lisp/benchmark-init"
   :config
   (benchmark-init/activate)
@@ -93,6 +94,8 @@
 ;;;  Setting up `load-path'
 ;; I use a modular configuration, so here I set up my `load-path' to include it.
 (add-to-list 'load-path (concat user-emacs-directory "modules/"))
+
+(defvar ik:after-display-hook '() "Hooks to run after Emacs has displayed something.")
 
 ;;;  Requires
 (require 'ik-vars)
@@ -109,6 +112,7 @@
   (require 'ik-work))
 
 (add-hook 'elpaca-after-init (lambda ()
+			       (run-hooks ik:after-display-hook)
 			       (setq gc-cons-threshold ik:original-gc-cons-threshold)
 			       (profiler-stop)))
 

@@ -35,7 +35,7 @@
   (ebib-import-target-directory (concat ik:notes-dir "/assets/"))
   :bind (("C-c r b" . ebib)))
 
-(use-package biblio :ensure t)
+(use-package biblio :ensure t :commands biblio-lookup)
 (use-package biblio-openlibrary
   :after biblio
   :ensure '(biblio-openlibrary :host github :repo "fabcontigiani/biblio-openlibrary")
@@ -51,14 +51,21 @@
 (use-package pdf-tools
   :ensure t
   :magic ("%PDF" . pdf-view-mode)
-  :hook (elpaca-after-init . pdf-tools-install))
+  :hook (ik:after-display . pdf-tools-install))
+
+(use-package nov
+  :ensure t
+  :mode
+  (("\\.epub\\'" . nov-mode)))
 
 (use-package citar
   :ensure t
+  :after org
+  :commands citar-create-note
   :custom
   (org-cite-global-bibliography
    `(,(expand-file-name (concat ik:notes-dir "/lib.bib"))
-     ,(expand-file-name (static-if ik:work-laptop-p "~/lib.bib" "~/Dropbox/ZK/References.bib"))))
+     ,(expand-file-name (static-if ik:work-laptop-p "~/Dropbox/ZK/References.bib" "~/Dropbox/ZK/lib.bib" ))))
   (org-cite-insert-processor 'citar)
   (org-cite-follow-processor 'citar)
   (org-cite-activate-processor 'citar)

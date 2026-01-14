@@ -25,11 +25,10 @@
 
 ;;; Code:
 
-(use-package amx :ensure t)
+(use-package amx :ensure t :defer t)
 
 (use-package ivy
   :ensure t
-  :after amx
   :hook elpaca-after-init
   :custom
   (ivy-use-virtual-buffers t)
@@ -41,9 +40,11 @@
 
 (use-package ivy-avy
   :ensure nil
-  :after avy
   :load-path "./elpaca/repos/swiper"
-  :demand t)
+  :hook (dashboard-before-initialize . provide-ivy-avy)
+  :init
+  (defun provide-ivy-avy ()
+    (require 'ivy-avy)))
 
 (use-package counsel
   :ensure t
@@ -68,14 +69,14 @@
 
 (use-package nerd-icons-ivy-rich
   :ensure t
-  :after (:all counsel nerd-icons)
+  :after counsel
+  :functions counsel-describe-variable-transformer counsel-describe-function-transformer ffip-project-root
   :hook
   (counsel-mode . nerd-icons-ivy-rich-mode)
   (counsel-mode . ivy-rich-mode))
 
 (use-package avy
   :ensure t
-  :demand t
   :bind (("C-'" . avy-goto-char)
 	 ("M-'" . avy-goto-line)))
 
@@ -85,7 +86,11 @@
   :bind (("C-s" . swiper)
 	 ("C-r" . swiper-all)
 	 ("M-s ." . swiper-thing-at-point)
-	 ("M-s M-." . swiper-thing-at-point)))
+	 ("M-s M-." . swiper-thing-at-point)
+	 (:map swiper-map
+	       ("C-'" . ivy-avy))))
+
+
 
 
 (provide 'ik-ivy)

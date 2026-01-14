@@ -36,6 +36,12 @@
   (prog-mode . electric-pair-local-mode)
   (prog-mode . display-line-numbers-mode)
   (prog-mode . hl-line-mode)
+  (dashboard-after-initialize . recentf-mode)
+  (dashboard-after-initialize . delete-selection-mode)
+  (doom-modeline-mode . display-time-mode)
+  (doom-modeline-mode . display-battery-mode)
+  (dashboard-after-initialize . hl-line-mode)
+  (elpaca-after-init . load-custom-file)
   :custom
   (ring-bell-function #'ignore)
   (user-full-name "Ian Kollipara")
@@ -45,14 +51,9 @@
   (xref-search-program 'ripgrep)
   :config
   (defalias 'yes-or-no-p 'y-or-n-p)
-  (set-fringe-mode 10)
-  (recentf-mode 1)
-  (delete-selection-mode 1)
-  (display-time-mode 1)
-  (display-battery-mode 1)
-  (hl-line-mode 1)
-  (when (file-exists-p custom-file)
-    (load custom-file))
+  (defun load-custom-file ()
+    (when (file-exists-p custom-file)
+      (load custom-file)))
   (set-face-attribute 'default nil :family "Cascadia Code" :height (static-if ik:work-laptop-p 160 110))
   (set-face-attribute 'variable-pitch nil :family "Space Mono" :height (static-if ik:work-laptop-p 160 110))
   (set-face-attribute 'fixed-pitch nil :family "Space Mono" :height (static-if ik:work-laptop-p 160 110)))
@@ -83,8 +84,7 @@
 
 
 (use-package no-littering
-  :ensure t
-  :demand t
+  :ensure (:wait t)
   :custom
   (version-control t)
   (kept-old-versions 6)

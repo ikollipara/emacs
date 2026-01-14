@@ -27,11 +27,11 @@
 ;;; Code:
 
 (use-package wgrep
-  :ensure t)
+  :ensure t
+  :commands wgrep-change-to-wgrep-mode)
 
 (use-package exec-path-from-shell
-  :ensure t
-  :demand t
+  :ensure (:wait t)
   :hook (elpaca-after-init . exec-path-from-shell-initialize))
 
 (use-package mise
@@ -40,20 +40,19 @@
 
 (use-package eat
   :ensure '(eat :host codeberg :repo "akib/emacs-eat")
+  :custom (eat-kill-buffer-on-exit t)
   :hook (eshell-load . eat-eshell-mode))
 
-(use-package transient :ensure t :demand t)
-
-(use-package hydra :ensure t :demand t)
+(use-package transient :ensure t :defer t)
 
 (use-package magit
   :ensure t
-  :after transient
   :bind (("C-x g" . magit)))
 
 (use-package forge
   :ensure t
   :after magit
+  :defer t
   :config
   (auth-source-forget-all-cached))
 
@@ -158,7 +157,7 @@
 
 (use-package yasnippet
   :ensure t
-  :hook (elpaca-after-init . yas-global-mode)
+  :hook ((text-mode prog-mode conf-mode snippet-mode) . yas-minor-mode-on)
   :bind (("M-/" . yas-insert-snippet))
   :custom (yas-snippet-dirs (list (concat user-emacs-directory "snippets"))))
 
@@ -212,11 +211,14 @@
    ("\\.tsx\\'" . rjsx-mode)))
 
 (use-package json-mode
+  :mode (("\\.json\\'" . json-mode))
   :ensure t
   :custom
   (js-indent-level 2))
 
 (use-package yaml-mode
+  :mode (("\\.yml\\'" . yaml-mode)
+	 ("\\.yaml\\'" . yaml-mode))
   :ensure t)
 
 (use-package fsharp-mode
@@ -235,6 +237,10 @@
 
 (use-package csproj-mode
   :after yasnippet
+  :mode
+  (("\\.fsproj\\'" . csproj-mode)
+   ("\\.csproj\\'" . csproj-mode))
+  :functions yas-load-directory
   :ensure '(csproj-mode :host github :repo "omajid/csproj-mode"))
 
 (use-package sharper
@@ -242,7 +248,10 @@
   :bind (:map csharp-ts-mode-map
 	      ("C-c C-c" . sharper-main-transient)))
 
-(use-package dockerfile-mode :ensure t)
+(use-package dockerfile-mode
+  :ensure t
+  :mode (("Dockerfile" . dockerfile-mode)
+	 ("dockerfile" . dockerfile-mode)))
 (use-package docker
   :ensure t
   :commands docker)
@@ -254,7 +263,7 @@
 
 (use-package vhdl-ext
   :ensure t
-  :after (:all vhdl-ts-mode hydra)
+  :after vhdl-ts-mode
   :hook vhdl-ts-mode
   :custom
   (vhdl-ext-feature-list '(font-lock xref capf hierarchy lsp flycheck beautify navigation compilation imenu which-func ports))
@@ -274,7 +283,22 @@
 
 (use-package sly
   :functions slime-mode
-  :ensure t)
+  :ensure t
+  :commands sly-mode)
+
+(use-package scala-ts-mode
+  :ensure '(scala-ts-mode :host github :repo "KaranAhlawat/scala-ts-mode")
+  :hook (scala-ts-mode . lsp-deferred))
+
+(use-package lsp-metals
+  :ensure t
+  :functions treemacs-define-doubleclick-action dap-variables-expand-in-launch-configuration
+  :no-require
+  :hook (scala-ts-mode . load-lsp-metals)
+  :init
+  (defun load-lsp-metals ()
+    (require 'lsp-metals)))
+
 
 (use-package markdown-mode
   :hook
@@ -289,7 +313,10 @@
   (markdown-hide-urls t)
   (markdown-hide-markup t)
   (markdown-fontify-code-blocks-natively t)
-  (markdown-enable-highlighting-syntax t))
+  (markdown-enable-highlighting-syntax t)
+  :mode
+  (("\\.md\\'" . markdown-mode)
+   ("\\.markdown\\'" . markdown-mode)))
 
 (use-package cognitive-complexity
   :ensure '(cognitive-complexity :host github :repo "emacs-vs/cognitive-complexity")

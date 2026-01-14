@@ -31,5 +31,15 @@
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 
+(when (and (fboundp 'startup-redirect-eln-cache)
+           (boundp 'native-comp-eln-load-path))
+  (startup-redirect-eln-cache
+   (convert-standard-filename
+    (expand-file-name  "var/eln-cache/" user-emacs-directory))))
+
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
+(add-to-list 'default-frame-alist '(left-fringe . 10))
+(add-to-list 'default-frame-alist '(right-fringe . 10))
+
 (provide 'early-init)
 ;;; early-init.el ends here

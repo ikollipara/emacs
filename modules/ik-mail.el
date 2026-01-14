@@ -57,10 +57,11 @@
   :ensure t
   :functions mu4e-running-p notmuch-show-view-raw-message notmuch-show mu4e-message-readable-path
   :after mu4e
-  :hook (elpaca-after-init . load-org-msg)
+  :hook (mu4e-compose-mode . load-org-msg)
   :init
   (defun load-org-msg ()
-    (require 'org-msg))
+    (require 'org-msg)
+    (org-msg-mode))
   :config
   (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil tex:dvipng"
         org-msg-startup "hidestars indent inlineimages"

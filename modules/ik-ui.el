@@ -37,11 +37,13 @@
 
 (use-package catppuccin-theme
   :ensure t
-  :demand t
   :custom
   (catppuccin-flavor 'latte)
+  :hook (dashboard-before-initialize . load-catppuccin-theme)
   :bind (("C-c t t" . ivy-catppuccin-load-flavor))
   :init
+  (defun load-catppuccin-theme ()
+    (load-theme 'catppuccin :no-confirm))
   (defvar ik:catppuccin-rich-init-p nil)
   (defvar ik:catppuccin-descriptions
     '((latte . ("🌻" . "Our lightest theme harmoniously inverting the essence of Catppuccin's dark themes."))
@@ -82,19 +84,14 @@
 		 (ivy-rich--catppuccin-load-flavor-extract-name (:width 0.15))
 		 (ivy-rich--catppuccin-load-flavor-extract-description (:width 0.8 :face 'font-lock-doc-face)))))
 	     ivy-rich-display-transformers-list))
-    (ivy-rich-reload))
-  :config
-  (load-theme 'catppuccin :no-confirm))
+    (ivy-rich-reload)))
+
 
 
 (use-package focus
   :ensure t
   :bind (("C-c t f" . focus-mode)))
 
-(use-package grid
-  :ensure (grid :host github :repo "ichernyshovvv/grid.el")
-  :demand t
-  :functions grid--merge-plists)
 
 (use-package dashboard
   :ensure t
@@ -104,7 +101,7 @@
   (dashboard-footer-messages '("Failures, repeated failures, are finger posts on the road to achievement. One fails forward toward success. \n- C.S. Lewis"))
   (dashboard-center-content t)
   (dashboard-vertically-center-content t)
-  (dashboard-items '((projects . 5) (agenda . 5) (recents . 5) (bookmarks . 1)))
+  (dashboard-items '((projects . 5) (recents . 5) (bookmarks . 1)))
   (dashboard-projects-backend 'project-el)
   (dashboard-projects-backend-switch-function 'project-switch-project)
   (dashboard-agenda-files `(,(concat ik:notes-dir "/gtd.org")))
@@ -119,7 +116,12 @@
   :functions shortdoc--function-groups)
 
 (use-package nerd-icons
-  :ensure t)
+  :ensure t
+  :no-require
+  :hook (elpaca-after-init . load-nerd-icons)
+  :init
+  (defun load-nerd-icons ()
+    (require 'nerd-icons)))
 
 (use-package nerd-icons-ibuffer
   :ensure t
