@@ -41,14 +41,32 @@
   :hook
   (org-mode . visual-line-mode)
   (org-mode . variable-pitch-mode)
+  (org-mode . org-indent-mode)
   :custom
   (org-hide-emphasis-markers t)
+  (org-image-actual-width nil)
   :config
   (require 'org-tempo)
   (require 'org-habit)
   (require 'org-timer)
   (defun setup-org-faces ()
-    (set-face-attribute 'org-document-title nil :height 2.0))
+    (set-face-attribute 'org-level-1 nil :inherit nil :height 1.6 :foreground (face-attribute 'lambda-green :foreground))
+    (set-face-attribute 'org-level-2 nil :inherit nil :height 1.4 :foreground (face-attribute 'lambda-red :foreground))
+    (set-face-attribute 'org-level-3 nil :inherit nil :height 1.2 :foreground (face-attribute 'lambda-aqua :foreground))
+    (set-face-attribute 'org-level-4 nil :inherit nil :height 1.0)
+    (set-face-attribute 'org-level-5 nil :inherit nil :height 1.0)
+    (set-face-attribute 'org-level-6 nil :inherit nil :height 1.0)
+    (set-face-attribute 'org-level-7 nil :inherit nil :height 1.0)
+    (set-face-attribute 'org-level-8 nil :inherit nil :height 1.0)
+    (set-face-attribute 'org-document-title nil :height 2.0 :foreground (face-attribute 'lambda-blue :foreground))
+    (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
+    (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
+    (set-face-attribute 'org-formula nil :inherit 'fixed-pitch)
+    (set-face-attribute 'org-code nil :inherit '(shadow fixed-pitch))
+    (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+    (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+    (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+    (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch))
   (setup-org-faces)
   (defvar ik:org-gtd-file (concat ik:notes-dir "/gtd.org") "The `org' file used for my gtd workflow.")
   (defvar ik:org-journal-file (concat ik:notes-dir "/journal.org") "My journal file.")
@@ -148,7 +166,9 @@
 (use-package org-modern
   :ensure t
   :after org
-  :hook org-mode)
+  :hook org-mode
+  :config
+  (defvar ik:org-present--org-modern-original-stars org-modern-replace-stars))
 
 (use-package org-download
   :ensure t
@@ -160,71 +180,19 @@
 
 (use-package denote
   :ensure t
-  :after org
   :hook
   (dired-mode . denote-dired-mode)
   (org-mode . denote-rename-buffer-mode)
+  (org-mode . setup-denote-keybinds-for-org)
   :custom
   (denote-directory ik:notes-dir)
-  :bind (("C-c n f" . counsel-denote-open)
-	 ("C-c n d" . denote)
-	 (:map org-mode-map
-	       ("C-c C-x C-d" . denote-link)
-	       ("C-c C-x M-d" . denote-backlinks)))
+  :bind (("C-c n f" . denote-open-or-create)
+	 ("C-c n d" . denote))
+
   :init
-  (defvar ik:denote-rich-init-p nil)
-  (defun setup-denote-ivy-rich ()
-    (setopt ivy-rich-display-transformers-list
-	    (append
-	     '(counsel-denote-open
-	       (:columns
-		((nerd-icons-ivy-rich-file-icon)
-		 (ivy-rich--counsel-denote-open-extract-name (:width 0.15))
-		 (ivy-rich--counsel-denote-open-extract-keyword (:width 0.8)))))
-	     ivy-rich-display-transformers-list))
-    (ivy-rich-reload))
-  (defun fast-read-org-titles (dir)
-    "Use ripgrep to extract #+TITLE lines from .org files under DIR."
-    (let ((default-directory dir))
-      (mapcar
-       (lambda (line)
-	 (when (string-match "^\\(.*\\.org\\):[^\n]*#\\+title:[[:space:]]*\\(.*\\)" line)
-           (cons (expand-file-name (match-string 1 line) dir)
-		 (string-trim (match-string 2 line)))))
-       (process-lines
-	"rg"
-	"--with-filename"       ;; show filename prefix
-	"--no-heading"          ;; one line per match
-	"--smart-case"
-	"--glob" "*.org"        ;; only org files
-	"^#\\+title:"           ;; match title line
-	"."))))                 ;; search from current directory
-  
-  (defun ivy-rich--counsel-denote-open-extract-name (candidate)
-    (let ((options (fast-read-org-titles counsel--fzf-dir))
-	  (normalized-name (expand-file-name (concat counsel--fzf-dir "/" candidate))))
-      (alist-get normalized-name options nil nil 'string=)))
-  (defun ivy-rich--counsel-denote-open-extract-keyword (candidate)
-    (string-replace "_" ", " (car (string-split (cadr (string-split (cadr (string-split candidate "--")) "__")) ".org"))))
-  (defun counsel-denote-open ()
-    "Open a note using a rich counsel interface."
-    (interactive)
-    (unless ik:denote-rich-init-p
-      (setq ik:denote-rich-init-p t)
-      (setup-denote-ivy-rich))
-    (let ((counsel--fzf-dir (concat ik:notes-dir "/")))
-      (with-environment-variables
-	  (("FZF_DEFAULT_COMMAND" "fd --type f -e org --exclude gtd.org"))
-	(ivy-read "Open Denote: "
-		  #'counsel-fzf-function
-		  :re-builder #'ivy--regex-ignore-order
-		  :dynamic-collection t
-		  :action (lambda (x)
-			    (with-ivy-window
-			      (let ((default-directory counsel--fzf-dir))
-				(when (bufferp x) (kill-buffer x))
-				(find-file x))))
-		  :caller 'counsel-denote-open))))
+  (defun setup-denote-keybinds-for-org ()
+    (bind-key "C-c C-x C-d" 'denote-link 'org-mode-map)
+    (bind-key "C-c C-x M-d" 'denote-backlinks 'org-mode-map))
 
   (defun denote-create-from-article-link ()
     "Create a new denote note with the name from the LINK."
@@ -240,6 +208,33 @@
 	(insert "#+LINK: " path))
       (switch-to-buffer new-note))))
 
+(use-package org-present
+  :ensure t
+  :commands org-present
+  :hook
+  (org-present-mode . org-present--start-up)
+  (org-present-mode-quit . org-present--shut-down)
+  :init
+  (defun org-present--start-up ()
+    (setq-local face-remapping-alist '((default (:height 1.5) variable-pitch)
+                                       (header-line (:height 4.0) variable-pitch)
+                                       (org-document-title (:height 1.75) org-document-title)
+                                       (org-code (:height 1.55) org-code)
+                                       (org-verbatim (:height 1.55) org-verbatim)
+                                       (org-block (:height 1.25) org-block)
+                                       (org-block-begin-line (:height 0.7) org-block)))
+    (setq header-line-format " ")
+    (org-display-inline-images)
+    (hide-mode-line-mode 1)
+    (jinx-mode -1)
+    (set-frame-parameter (selected-frame) 'alpha '(97 . 100)))
+  
+  (defun org-present--shut-down ()
+    (setq-local face-remapping-alist '((default variable-pitch default)))
+    (setq header-line-format nil)
+    (hide-mode-line-mode -1)
+    (jinx-mode 1)
+    (set-frame-parameter (selected-frame) 'alpha '(100 . 100))))
 
 (use-package jinx
   :ensure t

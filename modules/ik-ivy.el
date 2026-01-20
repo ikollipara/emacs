@@ -30,6 +30,7 @@
 (use-package ivy
   :ensure t
   :hook elpaca-after-init
+  :bind (("C-c C-r" . ivy-resume))
   :custom
   (ivy-use-virtual-buffers t)
   (iv-use-selectable-prompt t)

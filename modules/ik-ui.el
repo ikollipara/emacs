@@ -35,8 +35,26 @@
   :custom
   (mode-line-right-align-edge 'right-fringe))
 
+(use-package hide-mode-line
+  :ensure t
+  :commands hide-mode-line-mode)
+
+(use-package lambda-themes
+  :ensure '(lambda-themes :host github :repo "lambda-emacs/lambda-themes")
+  :hook (dashboard-before-initialize . load-lambda-theme)
+  :custom
+  (lambda-themes-set-italic-comments t)
+  (lambda-themes-set-italic-keywords t)
+  (lambda-themes-set-variable-pitch t)
+  (lambda-themes-set-vibrant t)
+  :bind (("C-c t t" . lambda-themes-toggle-theme))
+  :init
+  (defun load-lambda-theme ()
+    (load-theme 'lambda-dark :no-confirm)))
+
 (use-package catppuccin-theme
   :ensure t
+  :disabled t
   :custom
   (catppuccin-flavor 'latte)
   :hook (dashboard-before-initialize . load-catppuccin-theme)

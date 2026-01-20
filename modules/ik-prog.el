@@ -40,6 +40,7 @@
 
 (use-package eat
   :ensure '(eat :host codeberg :repo "akib/emacs-eat")
+  :bind (("C-c S" . eat))
   :custom (eat-kill-buffer-on-exit t)
   :hook (eshell-load . eat-eshell-mode))
 
@@ -299,6 +300,16 @@
   (defun load-lsp-metals ()
     (require 'lsp-metals)))
 
+
+(use-package lsp-haskell
+  :ensure '(lsp-haskell :host github :repo "emacs-lsp/lsp-haskell")
+  :defer 10)
+
+(use-package haskell-mode
+  :ensure t
+  :hook
+  (haskell-mode . lsp-deferred)
+  :commands haskell-mode)
 
 (use-package markdown-mode
   :hook
