@@ -84,7 +84,24 @@
   (citar-denote-title-format "title")
   (citar-denote-title-format-andstr "and")
   (citar-denote-use-bib-keywords nil)
-  :hook (elpaca-after-init . citar-denote-mode))
+  :hook (elpaca-after-init . citar-denote-mode)
+  :bind ((:map pdf-view-mode-map
+	       ("C-c C-c" . capture-fleeting-note-for-paper)))
+  :init
+  (defun capture-fleeting-note-for-paper ()
+    "Wrapper to always call a particular template."
+    (interactive)
+    (org-capture nil "rf"))
+  (defun determine-active-paper-for-capture-template ()
+    "Used in capture templates for writing to the correct file associated with a paper."
+    (let ((citekey (file-name-sans-extension (buffer-name))))
+      (if (not (funcall (citar-denote--has-citekeys (list citekey)) citekey))
+	  (message (format "%s is not a valid citekey!" citekey))
+	(progn
+	  (set-buffer (org-capture-target-buffer (car (gethash citekey (citar-get-notes citekey)))))
+	  (goto-char (point-max)))))))
+
+
 
 (use-package auctex
   :ensure (auctex

@@ -1,0 +1,20 @@
+# -*- mode: snippet -*-
+# name: header
+# key: hd
+# expand-env: ((yas-indent-line 'fixed))   
+# --
+
+//---------------------------------------------------------
+// Name: `(buffer-file-name)`
+// Author: Ian Kollipara <ian.kollipara@gmail.com>
+// Description:
+// $1
+//
+// Changelog:
+// `(format-time-string "%Y-%m-%d")`: File Created
+//---------------------------------------------------------
+
+///<summary>
+///$0
+///</summary>
+module $2

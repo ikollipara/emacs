@@ -92,6 +92,23 @@
 	       ("C-'" . ivy-avy))))
 
 
+(use-package ivy-xref
+  :ensure '(ivy-xref :host github :repo "alexmurray/ivy-xref")
+  :hook
+  (ivy-mode . load-ivy-xref)
+  :init
+  (defun load-ivy-xref ()
+    (when (>= emacs-major-version 27)
+      (setq xref-show-definitions-function #'ivy-xref-show-defs))
+    ;; Necessary in Emacs <27. In Emacs 27 it will affect all xref-based
+    ;; commands other than xref-find-definitions (e.g. project-find-regexp)
+    ;; as well
+    (setq xref-show-xrefs-function #'ivy-xref-show-xrefs)))
+
+(use-package ivy-yasnippet
+  :ensure t
+  :after (:all ivy yasnippet)
+  :bind (("M-/" . ivy-yasnippet)))
 
 
 (provide 'ik-ivy)

@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: literal
+# key: literal
+# --
+
+[<Literal>]
+let $1 = $0

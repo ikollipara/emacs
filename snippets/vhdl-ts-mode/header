@@ -1,0 +1,20 @@
+# -*- mode: snippet -*-
+# name: header
+# key: hd
+# --
+
+----------------------------------------------------------------------------------
+-- Name:	Ian Kollipara
+-- Date:	`(format-time-string "%Y-%m-%d")`
+-- Project:	`(project-name (project-current nil))`
+-- File:	`(buffer-file-name)`
+-- Purp:	$1
+--
+--
+-- Doc:	        $2
+--
+-- Changelog:
+--
+----------------------------------------------------------------------------------
+
+$0

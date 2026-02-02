@@ -36,7 +36,7 @@
 
 (use-package mise
   :ensure t
-  :hook (elpaca-after-init .global-mise-mode))
+  :hook (elpaca-after-init . global-mise-mode))
 
 (use-package eat
   :ensure '(eat :host codeberg :repo "akib/emacs-eat")
@@ -60,7 +60,7 @@
 
 (use-package flycheck
   :ensure t
-  :hook (elpaca-after-init . global-flycheck-mode)
+  :hook (prog-mode . flycheck-mode)
   :bind ((:map flycheck-mode-map
 	       ("C-c ! l" . flycheck-list-errors-dwim)))
   :init
@@ -222,6 +222,10 @@
 	 ("\\.yaml\\'" . yaml-mode))
   :ensure t)
 
+(use-package elm-mode
+  :ensure t
+  :hook (elm-mode . lsp-deferred))
+
 (use-package fsharp-mode
   :ensure t
   :hook (fsharp-mode . lsp-deferred)
@@ -232,7 +236,7 @@
   (advice-add 'fsharp-mode/find-sln-or-fsproj :override #'ad--fsharp-find-sln-only))
 
 (use-package csharp-mode
-  :ensure t
+  :ensure nil
   :hook
   (csharp-ts-mode . lsp-deferred))
 
@@ -311,6 +315,11 @@
   (haskell-mode . lsp-deferred)
   :commands haskell-mode)
 
+(use-package ess
+  :ensure t
+  :mode (("\\.r\\'" . ess-mode)
+	 ("\\.R\\'" . ess-mode)))
+
 (use-package markdown-mode
   :hook
   (markdown-mode . olivetti-mode)
@@ -332,6 +341,11 @@
 (use-package cognitive-complexity
   :ensure '(cognitive-complexity :host github :repo "emacs-vs/cognitive-complexity")
   :hook (ruby-ts-mode python-base-mode js-ts-mode csharp-ts-mode))
+
+(use-package imenu-anywhere
+  :ensure t
+  :after ivy
+  :bind (("C-." . ivy-imenu-anywhere)))
 
 (provide 'ik-prog)
 ;;; ik-prog.el ends here

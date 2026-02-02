@@ -150,6 +150,33 @@
   :ensure t
   :hook prog-mode)
 
+(use-package popper
+  :ensure t
+  :hook
+  (elpaca-after-init . popper-mode)
+  (popper-mode . popper-echo-mode)
+  :bind (("C-`" . popper-toggle)
+	 ("C-M-`" . popper-cycle))
+  :custom
+  (popper-group-function #'popper-group-by-perspective)
+  (popper-mode-line nil)
+  (popper-reference-buffers
+   `(helpful-mode
+     ivy-occur-mode
+     compilation-mode
+     lsp-help-mode
+     help-mode
+     ,(rx "*Capture*")
+     ,(rx "CAPTURE-" (zero-or-more (any alphanumeric "[]: ?\"'") ".org"))
+     xref--xref-buffer-mode)))
+
+(use-package ultra-scroll
+  :ensure '(ultra-scroll :host github :repo "jdtsmith/ultra-scroll")
+  :hook elpaca-after-init
+  :custom
+  (scroll-margin 0)
+  (scroll-conservatively 3))
+
 (provide 'ik-ui)
 ;;; ik-ui.el ends here
 
